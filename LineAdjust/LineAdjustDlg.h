@@ -4,6 +4,12 @@
 
 #pragma once
 
+#include "opencv2/opencv.hpp"
+#include "CameraThread.h"
+#include "CvvImage.h"
+#include "motorctrl.h"
+
+#define CAMERA_NUM 1
 
 // CLineAdjustDlg ¶Ô»°¿ò
 class CLineAdjustDlg : public CDialogEx
@@ -28,4 +34,16 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+private:
+	CvCapture *m_pCamera[CAMERA_NUM];
+	CCameraThread *m_pCameraThread[CAMERA_NUM];
+	CMotorCtrl *m_pMotorCtrl;
+	int m_iCameraPic[CAMERA_NUM];
+	int m_iOutputPic[CAMERA_NUM];
+public:
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	void drawToDC(IplImage* image, int ID, bool isCamera);
+	
+	afx_msg void OnBnClickedButton3();
 };

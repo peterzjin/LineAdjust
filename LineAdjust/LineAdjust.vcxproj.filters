@@ -39,6 +39,18 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ThreadLoop.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CvvImage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MotorCtrl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LineAdjust.cpp">
@@ -48,6 +60,21 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadLoop.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraThread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CvvImage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LineAdjAlgorithm.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MotorCtrl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

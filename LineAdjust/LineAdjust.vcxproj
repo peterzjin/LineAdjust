@@ -101,19 +101,28 @@
     <None Include="res\LineAdjust.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CameraThread.h" />
+    <ClInclude Include="CvvImage.h" />
     <ClInclude Include="LineAdjust.h" />
     <ClInclude Include="LineAdjustDlg.h" />
+    <ClInclude Include="MotorCtrl.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ThreadLoop.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CameraThread.cpp" />
+    <ClCompile Include="CvvImage.cpp" />
+    <ClCompile Include="LineAdjAlgorithm.cpp" />
     <ClCompile Include="LineAdjust.cpp" />
     <ClCompile Include="LineAdjustDlg.cpp" />
+    <ClCompile Include="MotorCtrl.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ThreadLoop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="LineAdjust.rc" />
@@ -121,4 +130,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="LineAdjust.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
