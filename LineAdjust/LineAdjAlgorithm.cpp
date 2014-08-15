@@ -9,7 +9,7 @@ Switch between standard and probabilistic Hough transform by changing "#if 1" to
 #define GAUGE_LINE_LENGTH_MM 200
 
 //areaSplite is the divider of reference point area
-int areaSplit = 6;
+int areaSplit = 5;
 //laserSplit is the divider of reference point area
 int laserSplit = 2.3; 
 #if 0

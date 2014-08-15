@@ -7,6 +7,7 @@ CThreadLoop::CThreadLoop(void)
 	, m_bStop(false)
 {
 	m_hEvent = CreateEvent(NULL, FALSE, FALSE, _T("MyEvent"));
+	m_hExit = CreateEvent(NULL, FALSE, FALSE, _T("ExitEvent"));
 	m_hThreadLoop = CreateThread(NULL, 0, s_ThreadLoop, this, 0, NULL);
 }
 
@@ -38,6 +39,8 @@ DWORD CThreadLoop::ThreadLoop(void)
 		}
 		m_bIsWorking = FALSE;
 	}
+
+	SetEvent(m_hExit);
 	return 0;
 }
 
@@ -63,8 +66,9 @@ DWORD WINAPI CThreadLoop::s_ThreadLoop(LPVOID lpParameter)
 }
 
 
-void CThreadLoop::StopThread(void)
+DWORD CThreadLoop::StopThread(void)
 {
 	m_bStop = TRUE;
 	SetEvent(m_hEvent);
+	return WaitForSingleObject(m_hExit, 1000);
 }

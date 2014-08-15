@@ -9,7 +9,9 @@
 #include "CvvImage.h"
 #include "motorctrl.h"
 
-#define CAMERA_NUM 1
+#define MAX_CAMERA_NUM 3
+
+#define CAMERA_NUM 3
 
 // CLineAdjustDlg ¶Ô»°¿ò
 class CLineAdjustDlg : public CDialogEx
@@ -39,11 +41,10 @@ private:
 	CCameraThread *m_pCameraThread[CAMERA_NUM];
 	CMotorCtrl *m_pMotorCtrl;
 	int m_iCameraPic[CAMERA_NUM];
-	int m_iOutputPic[CAMERA_NUM];
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
-	void drawToDC(IplImage* image, int ID, bool isCamera);
+	void drawToDC(IplImage* image, int ID);
 	
 	afx_msg void OnBnClickedButton3();
 };

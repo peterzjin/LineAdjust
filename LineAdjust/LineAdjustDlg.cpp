@@ -17,7 +17,7 @@
 // CLineAdjustDlg 对话框
 
 
-
+int g_PicIDs[MAX_CAMERA_NUM] = {IDC_CAMERA1, IDC_CAMERA2, IDC_CAMERA3};
 
 CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLineAdjustDlg::IDD, pParent)
@@ -27,11 +27,8 @@ CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	for (int i = 0; i < CAMERA_NUM; i++) {
 		m_pCamera[i] = NULL;
 		m_pCameraThread[i] = NULL;
+		m_iCameraPic[i] = g_PicIDs[i];
 	}
-
-	m_iCameraPic[0] = IDC_CAMERA1;
-	//m_iCameraPic[1] = IDC_CAMERA2;
-	//m_iCameraPic[2] = IDC_CAMERA3;
 }
 
 void CLineAdjustDlg::DoDataExchange(CDataExchange* pDX)
@@ -100,9 +97,9 @@ HCURSOR CLineAdjustDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CLineAdjustDlg::drawToDC(IplImage* image, int index, bool isCamera)
+void CLineAdjustDlg::drawToDC(IplImage* image, int index)
 {
-	int ID = isCamera ? m_iCameraPic[index] : m_iOutputPic[index];
+	int ID = m_iCameraPic[index];
 	CDC* pDC = GetDlgItem(ID)->GetDC();
     HDC pHdc = pDC->GetSafeHdc();
 
@@ -136,24 +133,23 @@ void CLineAdjustDlg::OnBnClickedButton1()
 
 		m_pMotorCtrl = new CMotorCtrl();
 
-		for (int i = 0; i < CAMERA_NUM; i++)
+		for (int i = 0; i < CAMERA_NUM; i++) {
 			m_pCameraThread[i] = new CCameraThread(this, m_pCamera[i], m_pMotorCtrl, i);
-
-		m_pCameraThread[0]->PostMsg(NULL, 0);
-		m_pCameraThread[0]->SetSelfRefresh(TRUE);
+			m_pCameraThread[i]->PostMsg(NULL, 0);
+			// Enable the self-refresh mode.
+			m_pCameraThread[i]->SetSelfRefresh(TRUE);
+		}
 	}
 }
-
 
 void CLineAdjustDlg::OnBnClickedButton2()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
 	if (m_pCamera[0] != NULL) {
-		m_pCameraThread[0]->SetSelfRefresh(FALSE);
-
 		m_pMotorCtrl->StopThread();
 		for (int i = 0; i < CAMERA_NUM; i++) {
+			m_pCameraThread[i]->SetSelfRefresh(FALSE);
 			m_pCameraThread[i]->StopThread();
 			cvReleaseCapture(&m_pCamera[i]);
 			m_pCamera[i] = NULL;
@@ -162,7 +158,6 @@ void CLineAdjustDlg::OnBnClickedButton2()
 		delete m_pMotorCtrl;
 	}
 }
-
 
 void CLineAdjustDlg::OnBnClickedButton3()
 {

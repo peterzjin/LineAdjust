@@ -13,6 +13,7 @@ private:
 	bool m_bStop;
 	std::queue<void *> m_pMessage;
 	HANDLE m_hEvent;
+	HANDLE m_hExit;
 	HANDLE m_hThreadLoop;
 public:
 	bool IsWorking(void);
@@ -22,6 +23,6 @@ private:
 	virtual void ThreadFunc(void *pMsg) = 0;
 public:
 	static DWORD WINAPI s_ThreadLoop(LPVOID lpParameter);
-	void StopThread(void);
+	DWORD StopThread(void);
 };
 
