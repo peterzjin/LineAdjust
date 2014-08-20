@@ -3,8 +3,10 @@
 #include "resource.h"
 #include "lineadjustdlg.h"
 
-#define FRAME_MAX_WIDTH 1280
-#define FRAME_MAX_HEIGHT 720
+//#define FRAME_MAX_WIDTH 1280
+//#define FRAME_MAX_HEIGHT 720
+#define FRAME_MAX_WIDTH 800
+#define FRAME_MAX_HEIGHT 600
 
 CCameraThread::CCameraThread(CLineAdjustDlg *cLineAdj, CvCapture *pCamera, CMotorCtrl *pMotorCtrl, int index)
 	: m_bSelfRefresh(false)
@@ -26,15 +28,17 @@ CCameraThread::~CCameraThread(void)
 
 void CCameraThread::ThreadFunc(void *pMsg)
 {
-	int calculateOffset(const IplImage *, IplImage *, double *);
+	int calculateOffset(IplImage *, IplImage *, double *);
 	IplImage *srcImage = NULL, *dstImage;
 	double scale;
 
 	srcImage = cvQueryFrame(m_pCamera);
 	if (!srcImage) return;
 	dstImage = cvCloneImage(srcImage);
-	calculateOffset(srcImage, dstImage, &scale);
-	if (m_pMotorCtrl) m_pMotorCtrl->PostMsg(NULL, 0);
+	int res = calculateOffset(srcImage, dstImage, &scale);
+	if(res == 0){
+		if (m_pMotorCtrl) m_pMotorCtrl->PostMsg(NULL, 0);
+	}
 	m_cLineAdj->drawToDC(dstImage, m_iIndex);
 	cvReleaseImage(&dstImage);
 
