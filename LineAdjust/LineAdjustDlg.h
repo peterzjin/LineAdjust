@@ -8,6 +8,7 @@
 #include "CameraThread.h"
 #include "CvvImage.h"
 #include "motorctrl.h"
+#include "UartCommon.h"
 
 #define MAX_CAMERA_NUM 3
 
@@ -22,6 +23,9 @@ public:
 
 // 对话框数据
 	enum { IDD = IDD_LINEADJUST_DIALOG };
+	HMENU m_hMenuMain;
+	CStatusBarCtrl m_StatusBar;
+	CUartCommon * m_pUartCommon;
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
@@ -47,4 +51,8 @@ public:
 	void drawToDC(IplImage* image, int ID);
 	
 	afx_msg void OnBnClickedButton3();
+	afx_msg void OnUartSetMenu();
+	afx_msg void OnMenuMotorControl();
+	afx_msg void OnBnClickedButtonClockMain();
+	afx_msg void OnBnClickedButtonAntiClockMain();
 };

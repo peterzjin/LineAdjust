@@ -51,6 +51,27 @@
     <ClInclude Include="MotorCtrl.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="DlgComSetting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="uart_src\hal_assert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="uart_src\hal_defs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="uart_src\hal_types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="uart_src\hal_uart.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MotorPannel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UartCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LineAdjust.cpp">
@@ -75,6 +96,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MotorCtrl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgComSetting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="uart_src\hal_uart.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="UartCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MotorPannel.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

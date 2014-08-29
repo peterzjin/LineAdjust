@@ -57,7 +57,11 @@ BOOL CLineAdjustApp::InitInstance()
 	// 创建 shell 管理器，以防对话框包含
 	// 任何 shell 树视图控件或 shell 列表视图控件。
 	CShellManager *pShellManager = new CShellManager;
-
+		
+	for(int i=1; i<=3; i++)
+	{
+		m_StepMotor[i-1] = new CStepMotor(i);
+	}
 	// 标准初始化
 	// 如果未使用这些功能并希望减小
 	// 最终可执行文件的大小，则应移除下列

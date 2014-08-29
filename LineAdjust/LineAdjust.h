@@ -9,7 +9,10 @@
 #endif
 
 #include "resource.h"		// 主符号
-
+#include "DlgComSetting.h"
+#include "UartCommon.h"
+#include "MotorPannel.h"
+#include "MotorCtrl.h"
 
 // CLineAdjustApp:
 // 有关此类的实现，请参阅 LineAdjust.cpp
@@ -19,13 +22,18 @@ class CLineAdjustApp : public CWinApp
 {
 public:
 	CLineAdjustApp();
-
+	CDlgComSetting m_dlgComSetting;
+	CUartCommon    m_cUartCommon;
+	CMotorPannel   m_dlgMotorPannel;
+	CMotorCtrl     m_MotorCtrl;
+	CStepMotor     *m_StepMotor[3];
+	
 // 重写
 public:
 	virtual BOOL InitInstance();
 
 // 实现
-
+	
 	DECLARE_MESSAGE_MAP()
 };
 

@@ -29,6 +29,7 @@ CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 		m_pCameraThread[i] = NULL;
 		m_iCameraPic[i] = g_PicIDs[i];
 	}
+	m_pUartCommon = &(theApp.m_cUartCommon);
 }
 
 void CLineAdjustDlg::DoDataExchange(CDataExchange* pDX)
@@ -42,6 +43,10 @@ BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CLineAdjustDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CLineAdjustDlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON3, &CLineAdjustDlg::OnBnClickedButton3)
+	ON_COMMAND(ID_UART_SET, &CLineAdjustDlg::OnUartSetMenu)
+	ON_COMMAND(ID_MENU_MOTOR_CONTROL, &CLineAdjustDlg::OnMenuMotorControl)
+	ON_BN_CLICKED(IDC_BUTTON_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonClockMain)
+	ON_BN_CLICKED(IDC_BUTTON_ANTI_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonAntiClockMain)
 END_MESSAGE_MAP()
 
 
@@ -57,6 +62,23 @@ BOOL CLineAdjustDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	m_hMenuMain=LoadMenu(AfxGetInstanceHandle(),MAKEINTRESOURCE(IDR_MENU_MAIN));//导入资源,创建菜单
+	::SetMenu(this->GetSafeHwnd(),m_hMenuMain);//添加到对话框
+
+	//Start the Status Bar
+	m_StatusBar.Create(WS_CHILD|WS_VISIBLE|SBT_OWNERDRAW,CRect(0,0,0,0),this,0);
+
+	 RECT CompRect;
+  
+    this->GetWindowRect(&CompRect);   
+	int width = CompRect.right - CompRect.left;
+	int strPartDim[3]={width/2,-1};//分割数量
+	//分割的大小是这样决定的，如上面分的3个窗口
+	//第一大小为100，第二个也为100（即200-100），第三个是状态栏的整个大小减去200.
+	m_StatusBar.SetParts(2,strPartDim); //设置状态栏文本?
+	m_StatusBar.SetText(_T("激光调教系统"),0,0);
+	m_StatusBar.SetText(_T("状态"),1,0); //下面是在状态栏中加入图标
+	//m_StatusBar.SetIcon(1, SetIcon(AfxGetApp()->LoadIcon(IDI_ICON_TE),FALSE));//为第二个分栏中加的图标
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -88,6 +110,13 @@ void CLineAdjustDlg::OnPaint()
 	{
 		CDialogEx::OnPaint();
 	}
+
+	#if 1
+	if(m_pUartCommon->GetStatus())
+		m_StatusBar.SetText("Status: COM ON",1,0); //下面是在状态栏中加入图标
+	else
+		m_StatusBar.SetText("Status: COM OFF",1,0); //下面是在状态栏中加入图标
+#endif
 }
 
 //当用户拖动最小化窗口时系统调用此函数取得光标
@@ -166,4 +195,35 @@ void CLineAdjustDlg::OnBnClickedButton3()
 	if (MessageBox( _T("Exit?"), _T(""), MB_YESNO | MB_ICONQUESTION ) == IDYES) {
 		PostMessage(WM_CLOSE);
 	}
+}
+
+
+void CLineAdjustDlg::OnUartSetMenu()
+{
+	// TODO: 在此添加命令处理程序代码
+	theApp.m_dlgComSetting.DoModal();
+	
+	if(m_pUartCommon->GetStatus())
+		m_StatusBar.SetText("Status: COM ON",1,0); //下面是在状态栏中加入图标
+	else
+		m_StatusBar.SetText("Status: COM OFF",1,0); //下面是在状态栏中加入图标
+}
+
+
+void CLineAdjustDlg::OnMenuMotorControl()
+{
+	// TODO: 在此添加命令处理程序代码
+	theApp.m_dlgMotorPannel.DoModal();
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonClockMain()
+{	
+	theApp.m_StepMotor[0]->RunForward(1);
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonAntiClockMain()
+{
+	theApp.m_StepMotor[0]->RunRollback(1);
 }
