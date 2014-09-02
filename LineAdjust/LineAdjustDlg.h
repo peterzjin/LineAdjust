@@ -12,7 +12,7 @@
 
 #define MAX_CAMERA_NUM 3
 
-#define CAMERA_NUM 3
+#define CAMERA_NUM 1
 
 // CLineAdjustDlg ¶Ô»°¿ò
 class CLineAdjustDlg : public CDialogEx
