@@ -18,6 +18,7 @@
 
 
 int g_PicIDs[MAX_CAMERA_NUM] = {IDC_CAMERA1, IDC_CAMERA2, IDC_CAMERA3};
+int g_OrderIDs[MAX_CAMERA_NUM] = {IDC_COMBO1, IDC_COMBO2, IDC_COMBO3};
 
 CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLineAdjustDlg::IDD, pParent)
@@ -25,6 +26,7 @@ CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	for (int i = 0; i < CAMERA_NUM; i++) {
+		m_iMap[i] = i;
 		m_pCamera[i] = NULL;
 		m_pCameraThread[i] = NULL;
 		m_iCameraPic[i] = g_PicIDs[i];
@@ -35,6 +37,10 @@ CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 void CLineAdjustDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	for (int i = 0; i < CAMERA_NUM; i++) {
+		DDX_Control(pDX, g_OrderIDs[i], m_cOrder[i]);
+		m_cOrder[i].SetCurSel(i);
+	}
 }
 
 BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
@@ -47,6 +53,7 @@ BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
 	ON_COMMAND(ID_MENU_MOTOR_CONTROL, &CLineAdjustDlg::OnMenuMotorControl)
 	ON_BN_CLICKED(IDC_BUTTON_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonClockMain)
 	ON_BN_CLICKED(IDC_BUTTON_ANTI_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonAntiClockMain)
+	ON_BN_CLICKED(IDC_BUTTON6, &CLineAdjustDlg::OnBnClickedButton6)
 END_MESSAGE_MAP()
 
 
@@ -128,7 +135,7 @@ HCURSOR CLineAdjustDlg::OnQueryDragIcon()
 
 void CLineAdjustDlg::drawToDC(IplImage* image, int index)
 {
-	int ID = m_iCameraPic[index];
+	int ID = m_iCameraPic[m_iMap[index]];
 	CDC* pDC = GetDlgItem(ID)->GetDC();
     HDC pHdc = pDC->GetSafeHdc();
 
@@ -226,4 +233,37 @@ void CLineAdjustDlg::OnBnClickedButtonClockMain()
 void CLineAdjustDlg::OnBnClickedButtonAntiClockMain()
 {
 	theApp.m_StepMotor[0]->RunRollback(1);
+}
+
+void CLineAdjustDlg::OnBnClickedButton6()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	int iIndex[CAMERA_NUM], iMap[CAMERA_NUM];
+	bool bErr = false;
+
+	if (m_pCamera[0] == NULL)
+		return;
+
+	for (int i = 0; i < CAMERA_NUM; i++) {
+		iMap[m_iMap[i]] = i;
+		iIndex[i] = m_cOrder[i].GetCurSel();
+	}
+
+	for (int i = 0; i < CAMERA_NUM; i++) {
+		for (int j = i + 1; j < CAMERA_NUM; j++) {
+			if (iIndex[i] == iIndex[j]) {
+				bErr = true;
+				break;
+			}
+		}
+	}
+
+	if (bErr) {
+		MessageBox( _T("Index Select Error"), _T(""), 0);
+	} else {
+		for (int i = 0; i < CAMERA_NUM; i++) {
+			m_iMap[iMap[i]] = iIndex[i];
+			m_cOrder[i].SetCurSel(i);
+		}
+	}
 }

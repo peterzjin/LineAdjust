@@ -68,7 +68,12 @@ DWORD WINAPI CThreadLoop::s_ThreadLoop(LPVOID lpParameter)
 
 DWORD CThreadLoop::StopThread(void)
 {
+	DWORD ret;
 	m_bStop = TRUE;
 	SetEvent(m_hEvent);
-	return WaitForSingleObject(m_hExit, 1000);
+	ret = WaitForSingleObject(m_hExit, 1000);
+	if (ret)
+		TerminateThread(m_hThreadLoop, ret);
+
+	return ret;
 }
