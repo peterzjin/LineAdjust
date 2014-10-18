@@ -130,7 +130,7 @@ uint8 HalUART0pen(char* portnr,					// portnumber (1..4)
 	//MessageBox(NULL,TEXT("Open Comm Fail."),TEXT("Message"), MB_OK); 
 	//TRACE( TEXT("Open Comm Fail.\n"));
 	printf("Open Comm Fail.\n");
-	return 0;
+	return -1;
   }
   else
   {

@@ -22,6 +22,9 @@ int g_OrderIDs[MAX_CAMERA_NUM] = {IDC_COMBO1, IDC_COMBO2, IDC_COMBO3};
 
 CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLineAdjustDlg::IDD, pParent)
+	, m_Motor1_pulse(_T("1600"))
+	, m_motor3_pulseNum(_T("1600"))
+	, m_motor2_pulseNum(_T("1600"))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
@@ -41,6 +44,9 @@ void CLineAdjustDlg::DoDataExchange(CDataExchange* pDX)
 		DDX_Control(pDX, g_OrderIDs[i], m_cOrder[i]);
 		m_cOrder[i].SetCurSel(i);
 	}
+	DDX_Text(pDX, IDC_EDIT_MOTOR_1_PULSE, m_Motor1_pulse);
+	DDX_Text(pDX, IDC_EDIT_MOTOR3_PULSE, m_motor3_pulseNum);
+	DDX_Text(pDX, IDC_EDIT_MOTOR2_PULSE, m_motor2_pulseNum);
 }
 
 BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
@@ -54,6 +60,10 @@ BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonClockMain)
 	ON_BN_CLICKED(IDC_BUTTON_ANTI_CLOCK_MAIN, &CLineAdjustDlg::OnBnClickedButtonAntiClockMain)
 	ON_BN_CLICKED(IDC_BUTTON6, &CLineAdjustDlg::OnBnClickedButton6)
+	ON_BN_CLICKED(IDC_BUTTON_MOTOR3_CLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor3Clock)
+	ON_BN_CLICKED(IDC_BUTTON_MOTOR3_ANTICLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor3Anticlock)
+	ON_BN_CLICKED(IDC_BUTTON_MOTOR2_CLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor2Clock)
+	ON_BN_CLICKED(IDC_BUTTON_MOTOR2_ANTICLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor2Anticlock)
 END_MESSAGE_MAP()
 
 
@@ -183,7 +193,7 @@ void CLineAdjustDlg::OnBnClickedButton2()
 	// TODO: 在此添加控件通知处理程序代码
 
 	if (m_pCamera[0] != NULL) {
-		m_pMotorCtrl->StopThread();
+		//m_pMotorCtrl->StopThread();
 		for (int i = 0; i < CAMERA_NUM; i++) {
 			m_pCameraThread[i]->SetSelfRefresh(FALSE);
 			m_pCameraThread[i]->StopThread();
@@ -226,13 +236,17 @@ void CLineAdjustDlg::OnMenuMotorControl()
 
 void CLineAdjustDlg::OnBnClickedButtonClockMain()
 {	
-	theApp.m_StepMotor[0]->RunForward(1);
+	UpdateData(TRUE);	
+	unsigned int pluseNum = atoi(m_Motor1_pulse.GetString());	
+	theApp.m_StepMotor[0]->RunForward(pluseNum);
 }
 
 
 void CLineAdjustDlg::OnBnClickedButtonAntiClockMain()
 {
-	theApp.m_StepMotor[0]->RunRollback(1);
+	UpdateData(TRUE);
+	unsigned int pluseNum = atoi(m_Motor1_pulse.GetString());	
+	theApp.m_StepMotor[0]->RunRollback(pluseNum);
 }
 
 void CLineAdjustDlg::OnBnClickedButton6()
@@ -266,4 +280,36 @@ void CLineAdjustDlg::OnBnClickedButton6()
 			m_cOrder[i].SetCurSel(i);
 		}
 	}
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonMotor3Clock()
+{	
+	UpdateData(TRUE);	
+	unsigned int pluseNum = atoi(m_motor3_pulseNum.GetString());	
+	theApp.m_StepMotor[2]->RunForward(pluseNum);
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonMotor3Anticlock()
+{
+	UpdateData(TRUE);
+	unsigned int pluseNum = atoi(m_motor3_pulseNum.GetString());	
+	theApp.m_StepMotor[2]->RunRollback(pluseNum);
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonMotor2Clock()
+{
+		UpdateData(TRUE);	
+	unsigned int pluseNum = atoi(m_motor2_pulseNum.GetString());	
+	theApp.m_StepMotor[1]->RunForward(pluseNum);
+}
+
+
+void CLineAdjustDlg::OnBnClickedButtonMotor2Anticlock()
+{
+		UpdateData(TRUE);
+	unsigned int pluseNum = atoi(m_motor2_pulseNum.GetString());	
+	theApp.m_StepMotor[1]->RunRollback(pluseNum);
 }

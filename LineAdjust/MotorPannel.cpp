@@ -96,7 +96,8 @@ void CMotorPannel::OnBnClickedButtonClockRotate()
 
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
 
-	theApp.m_MotorCtrl.RunClockContinue(motorNum);
+	//theApp.m_MotorCtrl.RunClockContinue(motorNum);
+	theApp.m_pMotorController->RunClockContinue(motorNum);
 }
 
 
@@ -106,7 +107,8 @@ void CMotorPannel::OnBnClickedButtonAntiClockRotate3()
 
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
 
-	theApp.m_MotorCtrl.RunAntiClockContinue(motorNum);
+	//theApp.m_MotorCtrl.RunAntiClockContinue(motorNum);
+	theApp.m_pMotorController->RunAntiClockContinue(motorNum);
 }
 
 
@@ -116,7 +118,8 @@ void CMotorPannel::OnBnClickedButtonMotorStop()
 
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
 
-	theApp.m_MotorCtrl.StopMotor(motorNum);
+	//theApp.m_MotorCtrl.StopMotor(motorNum);
+	theApp.m_pMotorController->StopMotor(motorNum);
 }
 
 
@@ -124,7 +127,8 @@ void CMotorPannel::OnBnClickedButtonClockRotate2()
 {
 	UpdateData(TRUE);
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
-	theApp.m_MotorCtrl.RunMotor(motorNum);
+	//theApp.m_MotorCtrl.RunMotor(motorNum);
+	theApp.m_pMotorController->RunMotor(motorNum);
 }
 
 //Led On
@@ -132,7 +136,8 @@ void CMotorPannel::OnBnClickedRadio3()
 {
 	UpdateData(TRUE);
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
-	theApp.m_MotorCtrl.OpenLed(motorNum);	
+	//theApp.m_MotorCtrl.OpenLed(motorNum);	
+	theApp.m_pMotorController->OpenLed(motorNum);	
 }
 
 
@@ -140,7 +145,8 @@ void CMotorPannel::OnBnClickedRadio4()
 {
 	UpdateData(TRUE);
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
-	theApp.m_MotorCtrl.CloseLed(motorNum);	
+//	theApp.m_MotorCtrl.CloseLed(motorNum);	
+	theApp.m_pMotorController->CloseLed(motorNum);	
 }
 
 
@@ -150,14 +156,17 @@ void CMotorPannel::OnBnClickedButtonSet()
 	BYTE motorNum = atoi(m_strMotorNum.GetString());
 
 	unsigned int pluseNum = atoi(m_pluseNum.GetString());	
-	theApp.m_MotorCtrl.SetMotorPulseNumber(motorNum, pluseNum);	
+	//theApp.m_MotorCtrl.SetMotorPulseNumber(motorNum, pluseNum);	
+	theApp.m_pMotorController->SetMotorPulseNumber(motorNum, pluseNum);	
 	Sleep(200);
 
-	theApp.m_MotorCtrl.SetMotorDirectionFrequence(motorNum, (!m_bClockRotate), 50);
+	//theApp.m_MotorCtrl.SetMotorDirectionFrequence(motorNum, (!m_bClockRotate), 50);
+	theApp.m_pMotorController->SetMotorDirectionFrequence(motorNum, (!m_bClockRotate), 50);
 	Sleep(200);
 
 	unsigned int motorSpeed = atoi(m_strMotorSpeed.GetString());	
-	theApp.m_MotorCtrl.SetMotorAccerateAndSpeed(motorNum, 50, motorSpeed);
+	//theApp.m_MotorCtrl.SetMotorAccerateAndSpeed(motorNum, 50, motorSpeed);
+	theApp.m_pMotorController->SetMotorAccerateAndSpeed(motorNum, 50, motorSpeed);
 	Sleep(100);	
 }
 

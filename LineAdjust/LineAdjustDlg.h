@@ -59,4 +59,11 @@ public:
 	afx_msg void OnBnClickedButtonAntiClockMain();
 	afx_msg void OnBnClickedButton6();
 	CComboBox m_cOrder[MAX_CAMERA_NUM];
+	CString m_Motor1_pulse;
+	CString m_motor3_pulseNum;
+	afx_msg void OnBnClickedButtonMotor3Clock();
+	afx_msg void OnBnClickedButtonMotor3Anticlock();
+	CString m_motor2_pulseNum;
+	afx_msg void OnBnClickedButtonMotor2Clock();
+	afx_msg void OnBnClickedButtonMotor2Anticlock();
 };

@@ -35,10 +35,12 @@ void CCameraThread::ThreadFunc(void *pMsg)
 	srcImage = cvQueryFrame(m_pCamera);
 	if (!srcImage) return;
 	dstImage = cvCloneImage(srcImage);
+	/*
 	int res = calculateOffset(srcImage, dstImage, &scale);
 	if(res == 0){
-		if (m_pMotorCtrl) m_pMotorCtrl->PostMsg(NULL, 0);
+//		if (m_pMotorCtrl) m_pMotorCtrl->PostMsg(NULL, 0);
 	}
+	*/
 	m_cLineAdj->drawToDC(dstImage, m_iIndex);
 	cvReleaseImage(&dstImage);
 
@@ -59,7 +61,7 @@ void CCameraThread::SetSelfRefresh(bool bSelfRefresh)
 	m_bSelfRefresh = bSelfRefresh;
 
 	if (m_bSelfRefresh && m_pTimer == 0) {
-		m_pTimer = SetTimer(NULL, 0, 500, SelfRefresh);
+		m_pTimer = SetTimer(NULL, 0, 100, SelfRefresh);
 		g_pCameraThread[m_iIndex] = this;
 		g_TimerID[m_iIndex] = m_pTimer;
 	}

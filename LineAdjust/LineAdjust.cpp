@@ -5,6 +5,10 @@
 #include "stdafx.h"
 #include "LineAdjust.h"
 #include "LineAdjustDlg.h"
+#include "MotorCtrl.h"
+#include "MotorController.h"
+#include "StepMotor.h"
+#include "MotorCtrl6.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,6 +62,9 @@ BOOL CLineAdjustApp::InitInstance()
 	// 任何 shell 树视图控件或 shell 列表视图控件。
 	CShellManager *pShellManager = new CShellManager;
 		
+	//m_pMotorController = new CMotorCtrl();
+	m_pMotorController = new CMotorCtrl6();
+
 	for(int i=1; i<=3; i++)
 	{
 		m_StepMotor[i-1] = new CStepMotor(i);

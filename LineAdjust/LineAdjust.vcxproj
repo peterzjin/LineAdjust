@@ -47,6 +47,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(OPENCV)\include;$(IncludePath);./uart_src</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,10 +108,13 @@
     <ClInclude Include="DlgComSetting.h" />
     <ClInclude Include="LineAdjust.h" />
     <ClInclude Include="LineAdjustDlg.h" />
+    <ClInclude Include="MotorController.h" />
     <ClInclude Include="MotorCtrl.h" />
+    <ClInclude Include="MotorCtrl6.h" />
     <ClInclude Include="MotorPannel.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StepMotor.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThreadLoop.h" />
     <ClInclude Include="UartCommon.h" />
@@ -126,12 +130,15 @@
     <ClCompile Include="LineAdjAlgorithm.cpp" />
     <ClCompile Include="LineAdjust.cpp" />
     <ClCompile Include="LineAdjustDlg.cpp" />
+    <ClCompile Include="MotorController.cpp" />
     <ClCompile Include="MotorCtrl.cpp" />
+    <ClCompile Include="MotorCtrl6.cpp" />
     <ClCompile Include="MotorPannel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StepMotor.cpp" />
     <ClCompile Include="ThreadLoop.cpp" />
     <ClCompile Include="UartCommon.cpp" />
     <ClCompile Include="uart_src\hal_uart.c">

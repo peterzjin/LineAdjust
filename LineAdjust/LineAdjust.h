@@ -13,6 +13,9 @@
 #include "UartCommon.h"
 #include "MotorPannel.h"
 #include "MotorCtrl.h"
+#include "MotorController.h"
+#include "StepMotor.h"
+//#include "MotorCtrl6.h"
 
 // CLineAdjustApp:
 // 有关此类的实现，请参阅 LineAdjust.cpp
@@ -27,6 +30,7 @@ public:
 	CMotorPannel   m_dlgMotorPannel;
 	CMotorCtrl     m_MotorCtrl;
 	CStepMotor     *m_StepMotor[3];
+	CMotorController *m_pMotorController;
 	
 // 重写
 public:

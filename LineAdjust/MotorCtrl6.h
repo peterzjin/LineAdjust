@@ -1,18 +1,19 @@
 #pragma once
+#include "motorcontroller.h"
 #include "threadloop.h"
 #include "UartCommon.h"
-#include "MotorController.h"
 
 #define MOTOR_SEND_BUFFER_SIZE     10
 #define MOTOR_RCV_BUFFER_SIZE     10
 
-class CMotorCtrl :
+class CMotorCtrl6 :
 	public CMotorController
 {
 public:
-	CMotorCtrl(void);
-	~CMotorCtrl(void);
-	void CalCheckSum(void);
+	CMotorCtrl6(void);
+	~CMotorCtrl6(void);
+
+void CalCheckSum(void);
 	void SendSyncCommand(void);
 
 	void SetMotorStepTable(BYTE motorNum, int stepTable, int stepAngle);
@@ -41,3 +42,4 @@ public:
 	BYTE m_send_buf[MOTOR_SEND_BUFFER_SIZE];
 	BYTE m_rcv_buf[MOTOR_RCV_BUFFER_SIZE];
 };
+
