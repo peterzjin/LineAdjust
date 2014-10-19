@@ -19,22 +19,36 @@
 
 int g_PicIDs[MAX_CAMERA_NUM] = {IDC_CAMERA1, IDC_CAMERA2, IDC_CAMERA3};
 int g_OrderIDs[MAX_CAMERA_NUM] = {IDC_COMBO1, IDC_COMBO2, IDC_COMBO3};
+double g_dScale[MAX_SCALE_NUM] = {0, 2, 5, 10, 20, 40, 80, 100};
+double g_dStep[MAX_SCALE_NUM] = {0, 8, 20, 40, 80, 160, 320, 400};
+int g_iValidNum = 8;
 
 CLineAdjustDlg::CLineAdjustDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CLineAdjustDlg::IDD, pParent)
 	, m_Motor1_pulse(_T("1600"))
 	, m_motor3_pulseNum(_T("1600"))
 	, m_motor2_pulseNum(_T("1600"))
+	, m_iAdjPhase(-1)
+	, m_uDataCnt(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
 	for (int i = 0; i < CAMERA_NUM; i++) {
-		m_iMap[i] = i;
+		m_iMap[i] = m_iRMap[i] = i;
 		m_pCamera[i] = NULL;
 		m_pCameraThread[i] = NULL;
 		m_iCameraPic[i] = g_PicIDs[i];
 	}
+	for (int i = 0; i < MOTOR_NUM; i++) {
+		m_iMotorMap[i] = i;
+		for (int j = 0; j < MAX_SCALE_NUM; j++) {
+			m_dScale[i][j] = g_dScale[j];
+			m_dStep[i][j] = g_dStep[j];
+		}
+	}
+	m_iValidNum = g_iValidNum;
 	m_pUartCommon = &(theApp.m_cUartCommon);
+	InitializeCriticalSection(&m_Lock);
 }
 
 void CLineAdjustDlg::DoDataExchange(CDataExchange* pDX)
@@ -64,6 +78,7 @@ BEGIN_MESSAGE_MAP(CLineAdjustDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_MOTOR3_ANTICLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor3Anticlock)
 	ON_BN_CLICKED(IDC_BUTTON_MOTOR2_CLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor2Clock)
 	ON_BN_CLICKED(IDC_BUTTON_MOTOR2_ANTICLOCK, &CLineAdjustDlg::OnBnClickedButtonMotor2Anticlock)
+	ON_BN_CLICKED(IDC_BUTTON7, &CLineAdjustDlg::OnBnClickedButton7)
 END_MESSAGE_MAP()
 
 
@@ -146,6 +161,8 @@ HCURSOR CLineAdjustDlg::OnQueryDragIcon()
 void CLineAdjustDlg::drawToDC(IplImage* image, int index)
 {
 	int ID = m_iCameraPic[m_iMap[index]];
+	ID = m_iCameraPic[m_iRMap[index]];
+	ID = m_iCameraPic[m_iMap[index]];
 	CDC* pDC = GetDlgItem(ID)->GetDC();
     HDC pHdc = pDC->GetSafeHdc();
 
@@ -157,6 +174,65 @@ void CLineAdjustDlg::drawToDC(IplImage* image, int index)
     cimg.DrawToHDC(pHdc, rect);
 
     ReleaseDC(pDC);
+}
+
+void CLineAdjustDlg::LoadConfig()
+{
+	TCHAR path[256], value[128], key[32], *token;
+	double l_dScale[MOTOR_NUM][MAX_SCALE_NUM];
+	double l_dStep[MOTOR_NUM][MAX_SCALE_NUM];
+	int l_iValidNum, i, j;
+
+	GetCurrentDirectory(256, path);
+	sprintf_s(path, "%s//config.ini", path);
+
+	if (!PathFileExists(path))
+		goto error;
+
+	for (i = 0; i < MOTOR_NUM; i++) {
+		j = 0;
+		sprintf_s(key, "SCALE_%d", i + 1);
+		GetPrivateProfileString("CONFIG", key, "\0", value, 128, path);
+		token = strtok(value, ",");
+		while(token != NULL) {
+			l_dScale[i][j++] = _tstof(token);
+			if (l_dScale[i][j - 1] > MAX_SCALE_VALUE || j >= MAX_SCALE_NUM - 2) goto error;
+			token = strtok(NULL, ",");
+		}
+		if (i == 0)
+			l_iValidNum = j;
+		else if (j != l_iValidNum)
+			goto error;
+
+		j = 0;
+		sprintf_s(key, "STEP_%d", i + 1);
+		GetPrivateProfileString("CONFIG", key, "\0", value, 128, path);
+		token = strtok(value, ",");
+		while(token != NULL) {
+			l_dStep[i][j++] = _tstof(token);
+			if (j >= MAX_SCALE_NUM - 2) goto error;
+			token = strtok(NULL, ",");
+		}
+		if (j != l_iValidNum)
+			goto error;
+	}
+
+	for (i = 0; i < MOTOR_NUM; i++) {
+		m_dScale[i][0] = m_dStep[i][0] = 0;
+		for (j = 0; j < l_iValidNum; j++) {
+			m_dScale[i][j + 1] = l_dScale[i][j];
+			m_dStep[i][j + 1] = l_dStep[i][j];
+		}
+		m_dScale[i][j + 1] = MAX_SCALE_VALUE;
+		m_dStep[i][j + 1] = (m_dStep[i][j] / m_dScale[i][j]) * MAX_SCALE_VALUE;
+		m_iValidNum = l_iValidNum + 2;
+	}
+
+	return;
+
+error:
+	MessageBox(_T("Config Read Error, Use Default!"), _T("Warning"), MB_ICONERROR|MB_OK);
+	return;
 }
 
 void CLineAdjustDlg::OnBnClickedButton1()
@@ -186,6 +262,8 @@ void CLineAdjustDlg::OnBnClickedButton1()
 			m_pCameraThread[i]->SetSelfRefresh(TRUE);
 		}
 	}
+
+	LoadConfig();
 }
 
 void CLineAdjustDlg::OnBnClickedButton2()
@@ -278,6 +356,7 @@ void CLineAdjustDlg::OnBnClickedButton6()
 		for (int i = 0; i < CAMERA_NUM; i++) {
 			m_iMap[iMap[i]] = iIndex[i];
 			m_cOrder[i].SetCurSel(i);
+			m_iRMap[iIndex[i]] = iMap[i];
 		}
 	}
 }
@@ -312,4 +391,92 @@ void CLineAdjustDlg::OnBnClickedButtonMotor2Anticlock()
 		UpdateData(TRUE);
 	unsigned int pluseNum = atoi(m_motor2_pulseNum.GetString());	
 	theApp.m_StepMotor[1]->RunRollback(pluseNum);
+}
+
+
+void CLineAdjustDlg::OnBnClickedButton7()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	OnBnClickedButton1();
+
+	if (m_pCamera[0] != NULL) {
+		m_pCameraThread[m_iRMap[0]]->StopAdjust();
+		m_pCameraThread[m_iRMap[1]]->StartAdjust();
+		m_pCameraThread[m_iRMap[2]]->StopAdjust();
+		m_iAdjPhase = 1;
+	}
+}
+
+void CLineAdjustDlg::NextPhase()
+{
+	switch (m_iAdjPhase) {
+	case 1:
+		m_pCameraThread[m_iRMap[0]]->StartAdjust();
+		m_pCameraThread[m_iRMap[1]]->StopAdjust();
+		m_pCameraThread[m_iRMap[2]]->StartAdjust();
+		m_iAdjPhase = 2;
+		break;
+	case 2:
+		m_pCameraThread[m_iRMap[0]]->StartAdjust();
+		m_pCameraThread[m_iRMap[1]]->StopAdjust();
+		m_pCameraThread[m_iRMap[2]]->StopAdjust();
+		m_iAdjPhase = 3;
+		break;
+	case 3:
+		m_pCameraThread[m_iRMap[0]]->StopAdjust();
+		m_pCameraThread[m_iRMap[1]]->StopAdjust();
+		m_pCameraThread[m_iRMap[2]]->StopAdjust();
+		m_iAdjPhase = 4;
+		break;
+	default:
+		m_pCameraThread[m_iRMap[0]]->StopAdjust();
+		m_pCameraThread[m_iRMap[1]]->StartAdjust();
+		m_pCameraThread[m_iRMap[2]]->StopAdjust();
+		m_iAdjPhase = 1;
+		return;
+	}
+}
+
+bool CLineAdjustDlg::GetPhase2Data(int idx, double scale, double *ret_scale)
+{
+	bool ret = false;
+
+	EnterCriticalSection(&m_Lock);
+
+	switch (m_uDataCnt) {
+	case 0:
+		if (m_iMap[idx] == 0)
+			m_uDataCnt = 1;
+		else if (m_iMap[idx] == 0)
+			m_uDataCnt = 2;
+
+		m_dTmpScale = scale;
+		break;
+	case 1:
+		if (m_iMap[idx] == 3) {
+			m_dTmpScale = 0;
+			*ret_scale = (m_dTmpScale - scale) / 2;
+			ret = true;
+		}
+		break;
+	case 2:
+		if (m_iMap[idx] == 0) {
+			m_dTmpScale = 0;
+			*ret_scale = (scale - m_dTmpScale) / 2;
+			ret = true;
+		}
+		break;
+	default:
+		break;
+	}
+
+	LeaveCriticalSection(&m_Lock);
+
+	return ret;
+}
+
+void CLineAdjustDlg::MotorRun(int idx, unsigned int step, bool forward) {
+	if (step == 0) return;
+
+	forward ? theApp.m_StepMotor[m_iMotorMap[idx]]->RunForward(step) : theApp.m_StepMotor[m_iMotorMap[idx]]->RunRollback(step);
 }

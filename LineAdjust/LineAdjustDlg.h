@@ -15,6 +15,12 @@
 
 #define CAMERA_NUM 3
 
+#define MOTOR_NUM 3
+
+#define MAX_SCALE_NUM 10
+
+#define MAX_SCALE_VALUE 100
+
 // CLineAdjustDlg ¶Ô»°¿ò
 class CLineAdjustDlg : public CDialogEx
 {
@@ -47,6 +53,11 @@ private:
 	CMotorCtrl *m_pMotorCtrl;
 	int m_iCameraPic[CAMERA_NUM];
 	int m_iMap[CAMERA_NUM];
+	int m_iRMap[CAMERA_NUM];
+	int m_iMotorMap[MOTOR_NUM];
+	unsigned char m_uDataCnt;
+	double m_dTmpScale;
+	CRITICAL_SECTION m_Lock;
 public:
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedButton2();
@@ -66,4 +77,14 @@ public:
 	CString m_motor2_pulseNum;
 	afx_msg void OnBnClickedButtonMotor2Clock();
 	afx_msg void OnBnClickedButtonMotor2Anticlock();
+	afx_msg void OnBnClickedButton7();
+
+	int m_iAdjPhase;
+	double m_dScale[MOTOR_NUM][MAX_SCALE_NUM];
+	double m_dStep[MOTOR_NUM][MAX_SCALE_NUM];
+	int m_iValidNum;
+	void NextPhase(void);
+	bool GetPhase2Data(int idx, double scale, double *ret_scale);
+	void MotorRun(int idx, unsigned int step, bool forward);
+	void LoadConfig();
 };
